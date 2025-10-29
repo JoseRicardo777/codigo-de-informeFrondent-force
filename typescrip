@@ -1,0 +1,20 @@
+// Ejemplo: Cálculo de similitud para procesadores
+interface ProcessorRequirements {
+  budget: number;
+  usage: 'gaming' | 'streaming' | 'workstation';
+  performancePriority: 'single-core' | 'multi-core';
+}
+
+function calculateProcessorScore(processor: Product, requirements: ProcessorRequirements): number {
+  let score = 0;
+  
+  // Factor precio (40% peso)
+  const priceScore = Math.max(0, 1 - (processor.price / requirements.budget));
+  score += priceScore * 0.4;
+  
+  // Factor rendimiento según uso (60% peso)
+  const performanceScore = calculatePerformanceMatch(processor, requirements);
+  score += performanceScore * 0.6;
+  
+  return score;
+}
