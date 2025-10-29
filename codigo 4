@@ -1,0 +1,22 @@
+// Ejemplo: Configuración de tema personalizado
+const config = {
+  theme: {
+    extend: {
+      colors: {
+        primary: {
+          50: '#eff6ff',
+          500: '#3b82f6',
+          900: '#1e3a8a',
+        },
+        gaming: {
+          accent: '#ff6b35',
+          dark: '#1a1a2e',
+        }
+      },
+      fontFamily: {
+        'display': ['Inter', 'system-ui'],
+        'mono': ['JetBrains Mono', 'monospace'],
+      }
+    }
+  }
+}
