@@ -1,0 +1,8 @@
+-- Ejemplo: Política RLS para carritos de compra
+CREATE POLICY "Users can only view their own cart" 
+ON cart_items FOR SELECT 
+USING (auth.uid() = user_id);
+
+CREATE POLICY "Users can only insert their own cart items" 
+ON cart_items FOR INSERT 
+WITH CHECK (auth.uid() = user_id);
