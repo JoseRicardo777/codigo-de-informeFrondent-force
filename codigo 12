@@ -1,0 +1,21 @@
+CREATE TABLE componentes (
+  id_componente SERIAL PRIMARY KEY,
+  tipo_componente VARCHAR(50) NOT NULL CHECK (tipo_componente IN (
+    'procesador', 'placa_madre', 'memoria_ram', 'tarjeta_grafica',
+    'almacenamiento', 'fuente_poder', 'gabinete', 'refrigeracion', 'monitor'
+  )),
+  nombre_componente VARCHAR(255) NOT NULL,
+  descripcion TEXT,
+  precio_bs DECIMAL(10,2) NOT NULL CHECK (precio_bs > 0),
+  imagen_url VARCHAR(500),
+  stock INTEGER DEFAULT 0 CHECK (stock >= 0),
+  especificaciones JSONB NOT NULL DEFAULT '{}',
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  updated_at TIMESTAMPTZ DEFAULT NOW()
+);
+
+-- Índices para componentes
+CREATE INDEX idx_componentes_tipo ON componentes(tipo_componente);
+CREATE INDEX idx_componentes_precio ON componentes(precio_bs);
+CREATE INDEX idx_componentes_stock ON componentes(stock) WHERE stock > 0;
+CREATE INDEX idx_componentes_especificaciones ON componentes USING GIN (especificaciones);
