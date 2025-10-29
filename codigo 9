@@ -1,0 +1,31 @@
+// Ejemplo: Estructura arquitectónica principal
+Architecture {
+  frontend: {
+    framework: "Next.js 16",
+    language: "TypeScript",
+    styling: "Tailwind CSS v4",
+    state_management: "Zustand + React Query",
+    components: "shadcn/ui + Custom"
+  },
+  
+  backend: {
+    runtime: "Node.js 18+",
+    api_style: "REST + Server Actions",
+    authentication: "Supabase Auth",
+    database: "Supabase PostgreSQL",
+    ai_integration: "Groq API + Vercel AI SDK"
+  },
+  
+  infrastructure: {
+    hosting: "Vercel",
+    database_hosting: "Supabase",
+    cdn: "Vercel Edge Network",
+    monitoring: "Vercel Analytics + Custom"
+  },
+  
+  external_services: {
+    ai_provider: "Groq Cloud",
+    email_provider: "Supabase Auth",
+    storage: "Supabase Storage"
+  }
+}
