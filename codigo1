@@ -1,0 +1,13 @@
+// Ejemplo: Server Component para catálogo de productos
+async function ProductCatalog() {
+  // Esta consulta se ejecuta en el servidor
+  const products = await supabase.from('products').select('*');
+  
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      {products.map(product => (
+        <ProductCard key={product.id} product={product} />
+      ))}
+    </div>
+  );
+}
