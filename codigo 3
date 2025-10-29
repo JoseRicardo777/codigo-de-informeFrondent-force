@@ -1,0 +1,24 @@
+// Ejemplo: Tipos para el sistema de productos
+interface Product	 {
+  id: number;
+  name: string;
+  category: ProductCategory;
+  price: number;
+  stock: number;
+  specifications: ProductSpecifications;
+  imageUrl: string;
+}
+
+type ProductCategory = 
+  | 'processor'
+  | 'motherboard' 
+  | 'graphics-card'
+  | 'memory'
+  | 'storage'
+  | 'power-supply'
+  | 'case'
+  | 'cooling';
+
+interface ProductSpecifications {
+  [key: string]: string | number;
+}
