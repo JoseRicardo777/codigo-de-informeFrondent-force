@@ -1,0 +1,22 @@
+// Ejemplo: Repository para productos
+interface ProductRepository {
+  findById(id: number): Promise<Product | null>;
+  findByCategory(category: string): Promise<Product[]>;
+  search(query: string, filters: ProductFilters): Promise<Product[]>;
+  updateStock(id: number, quantity: number): Promise<void>;
+}
+
+class SupabaseProductRepository implements ProductRepository {
+  constructor(private supabase: SupabaseClient) {}
+  
+  async findByCategory(category: string): Promise<Product[]> {
+    const { data, error } = await this.supabase
+      .from('products')
+      .select('*')
+      .eq('category', category)
+      .eq('stock', 'gt(0)');
+    
+    if (error) throw new Error(`Database error: ${error.message}`);
+    return data as Product[];
+  }
+}
