@@ -1,0 +1,61 @@
+// __tests__/components/product/ProductCard.test.tsx
+import { render, screen, fireEvent } from '@testing-library/react'
+import { ProductCard } from '@/components/product/ProductCard'
+import { Product } from '@/types/product'
+
+const mockProduct: Product = {
+  id: 1,
+  name: 'AMD Ryzen 5 5600X',
+  category: 'procesador',
+  price: 1200,
+  stock: 5,
+  specifications: { cores: 6, threads: 12 },
+  imageUrl: '/test.jpg'
+}
+
+const mockAddToCart = jest.fn()
+
+jest.mock('@/stores/cart-store', () => ({
+  useCartStore: () => ({
+    addItem: mockAddToCart,
+    isAdding: false
+  })
+}))
+
+describe('ProductCard', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  it('should render product information correctly', () => {
+    render(<ProductCard product={mockProduct} />)
+    
+    expect(screen.getByText('AMD Ryzen 5 5600X')).toBeInTheDocument()
+    expect(screen.getByText('Bs. 1200.00')).toBeInTheDocument()
+    expect(screen.getByText('Agregar')).toBeInTheDocument()
+  })
+
+  it('should call addToCart when button is clicked', () => {
+    render(<ProductCard product={mockProduct} />)
+    
+    const addButton = screen.getByText('Agregar')
+    fireEvent.click(addButton)
+    
+    expect(mockAddToCart).toHaveBeenCalledWith(mockProduct, 1)
+  })
+
+  it('should show out of stock when stock is 0', () => {
+    const outOfStockProduct = { ...mockProduct, stock: 0 }
+    render(<ProductCard product={outOfStockProduct} />)
+    
+    expect(screen.getByText('Sin Stock')).toBeInTheDocument()
+    expect(screen.getByText('Sin Stock')).toBeDisabled()
+  })
+
+  it('should show low stock warning', () => {
+    const lowStockProduct = { ...mockProduct, stock: 3 }
+    render(<ProductCard product={lowStockProduct} />)
+    
+    expect(screen.getByText('Solo 3 en stock')).toBeInTheDocument()
+  })
+})
