@@ -1,0 +1,20 @@
+const performanceMetrics = {
+  lighthouse: {
+    performance: 92,
+    accessibility: 98,
+    bestPractices: 95,
+    seo: 96
+  },
+  coreWebVitals: {
+    lcp: '1.8s',      // Largest Contentful Paint
+    fid: '85ms',      // First Input Delay
+    cls: '0.05',      // Cumulative Layout Shift
+    inp: '125ms'      // Interaction to Next Paint
+  },
+  loadingTimes: {
+    firstLoad: '2.1s',
+    productPage: '1.4s',
+    cartPage: '1.2s',
+    aiChat: '1.8s'
+  }
+}
