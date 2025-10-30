@@ -1,0 +1,13 @@
+const blockchainApplications = {
+  productAuthentication: {
+    problem: 'Garantías y autenticidad de productos',
+    solution: 'NFT-based warranty certificates',
+    benefits: [
+      'Garantías transferibles',
+      'Historial immutable de propietarios',
+      'Verificación instantánea de autenticidad',
+      'Automatización de reclamaciones'
+    ],
+    implementation: 'Polygon blockchain + smart contracts'
+  }
+}
