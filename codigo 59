@@ -1,0 +1,41 @@
+// __tests__/security/xss.test.ts
+describe('XSS Protection', () => {
+  it('should sanitize product names', () => {
+    const maliciousName = '<script>alert("XSS")</script>Product Name'
+    
+    const { container } = render(
+      <ProductCard product={{
+        ...mockProduct,
+        name: maliciousName
+      }} />
+    )
+    
+    // El script no debería ejecutarse
+    const scripts = container.querySelectorAll('script')
+    expect(scripts.length).toBe(0)
+    
+    // El texto debería estar escapado
+    expect(container.innerHTML).toContain('&lt;script&gt;')
+    expect(container.innerHTML).not.toContain('<script>')
+  })
+
+  it('should sanitize user input in chat', async () => {
+    const xssPayload = '<img src=x onerror=alert(1)>'
+    
+    const { req } = createMocks({
+      method: 'POST',
+      body: {
+        messages: [
+          { role: 'user', content: xssPayload }
+        ]
+      }
+    })
+
+    const response = await chatHandler(req)
+    const data = await response.json()
+    
+    // La respuesta no debería contener el payload sin escapar
+    expect(data.content).not.toContain('<img src=x onerror=alert(1)>')
+    expect(data.content).toContain('&lt;img')
+  })
+})
