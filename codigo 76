@@ -1,0 +1,22 @@
+const cachingOptimizations = {
+  currentState: 'Básico (Vercel Edge)',
+  recommended: 'Multi-nivel',
+  layers: [
+    {
+      level: 'CDN',
+      technology: 'Vercel Edge Network',
+      ttl: '1 hora para contenido estático'
+    },
+    {
+      level: 'API',
+      technology: 'Redis',
+      ttl: '5 minutos para datos dinámicos'
+    },
+    {
+      level: 'Database',
+      technology: 'Supabase caching',
+      ttl: 'Configuración optimizada'
+    }
+  ],
+  expectedImprovement: '40% reducción en tiempos de respuesta'
+}
