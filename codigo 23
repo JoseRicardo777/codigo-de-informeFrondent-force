@@ -1,0 +1,32 @@
+function Header() {
+  const { user } = useAuth();
+  const { cartItems } = useCart();
+  
+  return (
+    <header className="bg-gray-900 text-white shadow-lg">
+      <div className="container mx-auto px-4 py-3">
+        <div className="flex items-center justify-between">
+          {/* Logo */}
+          <Link href="/" className="flex items-center space-x-2">
+            <GamepadIcon className="h-8 w-8 text-gaming-accent" />
+            <span className="text-xl font-bold">Gaming Store</span>
+          </Link>
+          
+          {/* Navegación principal */}
+          <nav className="hidden md:flex space-x-6">
+            <NavLink href="/">Inicio</NavLink>
+            <NavLink href="/productos/componentes">Componentes</NavLink>
+            <NavLink href="/productos/pcs-armadas">PCs Armadas</NavLink>
+            <NavLink href="/arma-tu-pc">Arma tu PC</NavLink>
+          </nav>
+          
+          {/* Acciones de usuario */}
+          <div className="flex items-center space-x-4">
+            <CartButton itemCount={cartItems.length} />
+            {user ? <UserMenu user={user} /> : <AuthButtons />}
+          </div>
+        </div>
+      </div>
+    </header>
+  );
+}
