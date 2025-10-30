@@ -1,0 +1,32 @@
+// __tests__/actions/cart.test.ts
+import { addToCart } from '@/app/actions/cart'
+import { createClient } from '@/lib/supabase/server'
+
+jest.mock('@/lib/supabase/server')
+
+describe('addToCart Server Action', () => {
+  it('should add product to cart', async () => {
+    const mockUser = { id: 'user-123' }
+    const mockFormData = new FormData()
+    mockFormData.append('productId', '1')
+    mockFormData.append('quantity', '2')
+
+    const mockSupabase = {
+      auth: {
+        getUser: jest.fn().mockResolvedValue({ data: { user: mockUser }, error: null })
+      },
+      from: jest.fn().mockReturnThis(),
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({ data: { id_carrito: 1 }, error: null }),
+      insert: jest.fn().mockResolvedValue({ error: null })
+    }
+
+    ;(createClient as jest.Mock).mockResolvedValue(mockSupabase)
+
+    const result = await addToCart({}, mockFormData)
+
+    expect(result.success).toBe(true)
+    expect(result.message).toContain('agregado al carrito')
+  })
+})
