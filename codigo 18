@@ -1,0 +1,21 @@
+-- Todos pueden ver componentes (lectura pública)
+CREATE POLICY "componentes_select_all" ON componentes
+  FOR SELECT USING (true);
+
+-- Solo administradores pueden insertar
+CREATE POLICY "componentes_insert_admin" ON componentes
+  FOR INSERT WITH CHECK (
+    EXISTS (SELECT 1 FROM usuarios WHERE id = auth.uid() AND is_admin = true)
+  );
+
+-- Solo administradores pueden actualizar
+CREATE POLICY "componentes_update_admin" ON componentes
+  FOR UPDATE USING (
+    EXISTS (SELECT 1 FROM usuarios WHERE id = auth.uid() AND is_admin = true)
+  );
+
+-- Solo administradores pueden eliminar
+CREATE POLICY "componentes_delete_admin" ON componentes
+  FOR DELETE USING (
+    EXISTS (SELECT 1 FROM usuarios WHERE id = auth.uid() AND is_admin = true)
+  );
