@@ -1,0 +1,168 @@
+// app/actions/checkout.ts
+'use server'
+
+import { createClient } from '@/lib/supabase/server'
+import { z } from 'zod'
+
+const CheckoutSchema = z.object({
+  nombre: z.string().min(2).max(100),
+  email: z.string().email(),
+  telefono: z.string().min(8).max(20),
+  direccion: z.string().min(10).max(500),
+  ciudad: z.string().min(2).max(100)
+})
+
+export async function processCheckout(prevState: any, formData: FormData) {
+  const supabase = await createClient()
+  
+  // Verificar autenticación
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) {
+    return { error: 'Debes iniciar sesión para realizar una compra' }
+  }
+  
+  // Validar datos del formulario
+  const rawData = {
+    nombre: formData.get('nombre'),
+    email: formData.get('email'),
+    telefono: formData.get('telefono'),
+    direccion: formData.get('direccion'),
+    ciudad: formData.get('ciudad')
+  }
+  
+  const validationResult = CheckoutSchema.safeParse(rawData)
+  if (!validationResult.success) {
+    return {
+      error: 'Datos inválidos',
+      fieldErrors: validationResult.error.flatten().fieldErrors
+    }
+  }
+  
+  const checkoutData = validationResult.data
+  
+  try {
+    // Obtener carrito del usuario
+    const { data: cart, error: cartError } = await supabase
+      .from('carritos')
+      .select(`
+        id_carrito,
+        carrito_items (
+          id_item,
+          id_componente,
+          cantidad,
+          precio_unitario,
+          componentes (
+            nombre_componente,
+            stock
+          )
+        )
+      `)
+      .eq('id_usuario', user.id)
+      .single()
+    
+    if (cartError || !cart) {
+      return { error: 'Carrito no encontrado' }
+    }
+    
+    // Verificar stock y calcular total
+    let total = 0
+    const orderItems = []
+    
+    for (const item of cart.carrito_items) {
+      if (item.componentes.stock < item.cantidad) {
+        return { 
+          error: `Stock insuficiente para: ${item.componentes.nombre_componente}` 
+        }
+      }
+      
+      const subtotal = item.cantidad * item.precio_unitario
+      total += subtotal
+      
+      orderItems.push({
+        producto_id: item.id_componente,
+        nombre_producto: item.componentes.nombre_componente,
+        cantidad: item.cantidad,
+        precio_unitario: item.precio_unitario,
+        subtotal: subtotal
+      })
+    }
+    
+    // Crear orden en la base de datos
+    const { data: order, error: orderError } = await supabase
+      .from('ordenes')
+      .insert({
+        usuario_id: user.id,
+        nombre_cliente: checkoutData.nombre,
+        email_cliente: checkoutData.email,
+        telefono_cliente: checkoutData.telefono,
+        direccion_envio: checkoutData.direccion,
+        ciudad: checkoutData.ciudad,
+        total: total,
+        estado: 'pendiente'
+      })
+      .select('id')
+      .single()
+    
+    if (orderError) throw orderError
+    
+    // Crear items de la orden
+    const { error: itemsError } = await supabase
+      .from('orden_items')
+      .insert(
+        orderItems.map(item => ({
+          orden_id: order.id,
+          ...item
+        }))
+      )
+    
+    if (itemsError) throw itemsError
+    
+    // Actualizar stock de productos
+    for (const item of cart.carrito_items) {
+      const { error: stockError } = await supabase
+        .from('components')
+        .update({ stock: item.componentes.stock - item.cantidad })
+        .eq('id_componente', item.id_componente)
+      
+      if (stockError) throw stockError
+    }
+    
+    // Vaciar carrito
+    const { error: clearError } = await supabase
+      .from('carrito_items')
+      .delete()
+      .eq('id_carrito', cart.id_carrito)
+    
+    if (clearError) throw clearError
+    
+    // Generar mensaje para WhatsApp
+    const whatsappMessage = `
+¡Hola! Tengo un nuevo pedido:
+
+*Orden #${order.id}*
+*Cliente:* ${checkoutData.nombre}
+*Email:* ${checkoutData.email}
+*Teléfono:* ${checkoutData.telefono}
+*Dirección:* ${checkoutData.direccion}, ${checkoutData.ciudad}
+
+*Productos:*
+${orderItems.map(item => 
+  `• ${item.nombre_producto} x${item.cantidad} - Bs. ${item.subtotal.toFixed(2)}`
+).join('\n')}
+
+*Total: Bs. ${total.toFixed(2)}*
+
+*Fecha:* ${new Date().toLocaleDateString('es-BO')}
+    `.trim()
+    
+    return {
+      success: true,
+      orderId: order.id,
+      whatsappMessage: encodeURIComponent(whatsappMessage)
+    }
+    
+  } catch (error) {
+    console.error('Checkout error:', error)
+    return { error: 'Error al procesar la orden' }
+  }
+}
