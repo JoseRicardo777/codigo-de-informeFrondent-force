@@ -1,0 +1,11 @@
+-- Los usuarios solo pueden ver su propio carrito
+CREATE POLICY "carritos_select_own" ON carritos
+  FOR SELECT USING (auth.uid() = id_usuario);
+
+-- Los usuarios solo pueden insertar su propio carrito
+CREATE POLICY "carritos_insert_own" ON carritos
+  FOR INSERT WITH CHECK (auth.uid() = id_usuario);
+
+-- Los usuarios solo pueden actualizar su propio carrito
+CREATE POLICY "carritos_update_own" ON carritos
+  FOR UPDATE USING (auth.uid() = id_usuario);
