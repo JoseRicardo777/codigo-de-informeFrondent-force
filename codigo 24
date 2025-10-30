@@ -1,0 +1,58 @@
+function ProductCard({ product }: { product: Product }) {
+  const { addToCart, isAdding } = useCart();
+  
+  return (
+    <div className="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
+      {/* Imagen del producto */}
+      <div className="relative h-48 bg-gray-100">
+        <Image
+          src={product.imageUrl || '/placeholder-product.jpg'}
+          alt={product.name}
+          fill
+          className="object-cover"
+        />
+        {product.stock === 0 && (
+          <div className="absolute inset-0 bg-red-500 bg-opacity-70 flex items-center justify-center">
+            <span className="text-white font-bold">AGOTADO</span>
+          </div>
+        )}
+      </div>
+      
+      {/* Información del producto */}
+      <div className="p-4">
+        <div className="flex items-start justify-between mb-2">
+          <h3 className="font-semibold text-gray-900 line-clamp-2">
+            {product.name}
+          </h3>
+          <ProductBadge type={product.category} />
+        </div>
+        
+        <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+          {product.description}
+        </p>
+        
+        {/* Precio y acciones */}
+        <div className="flex items-center justify-between">
+          <div className="text-lg font-bold text-gray-900">
+            Bs. {product.price.toFixed(2)}
+          </div>
+          
+          <Button
+            onClick={() => addToCart(product.id, 1)}
+            disabled={product.stock === 0 || isAdding}
+            size="sm"
+          >
+            {product.stock === 0 ? 'Sin Stock' : 'Agregar'}
+          </Button>
+        </div>
+        
+        {/* Stock disponible */}
+        {product.stock > 0 && product.stock < 10 && (
+          <div className="mt-2 text-xs text-amber-600">
+            Solo {product.stock} en stock
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
