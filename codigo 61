@@ -1,0 +1,22 @@
+const catalogStats = {
+  totalProducts: 127,
+  categories: {
+    procesadores: 15,
+    placas_madre: 12,
+    memorias_ram: 18,
+    tarjetas_graficas: 22,
+    almacenamiento: 20,
+    fuentes_poder: 10,
+    gabinetes: 15,
+    refrigeracion: 15
+  },
+  priceRanges: {
+    bajo: { min: 50, max: 500, count: 45 },
+    medio: { min: 501, max: 1500, count: 52 },
+    alto: { min: 1501, max: 5000, count: 30 }
+  },
+  stockStatus: {
+    en_stock: 118,
+    agotado: 9
+  }
+}
