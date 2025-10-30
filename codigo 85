@@ -1,0 +1,20 @@
+const arImplementation = {
+  useCases: [
+    {
+      scenario: 'Visualización de productos en espacio',
+      technology: 'ARKit/ARCore + WebXR',
+      value: 'Mejorar confianza en compras online'
+    },
+    {
+      scenario: 'Guías de armado interactivas',
+      technology: 'Step-by-step AR instructions',
+      value: 'Reducir barrera para armado de PCs'
+    }
+  ],
+  technicalRequirements: [
+    '3D models de todos los productos',
+    'Sistema de tracking espacial',
+    'Optimización para dispositivos móviles',
+    'Integration con existing product data'
+  ]
+}
