@@ -1,0 +1,141 @@
+// lib/ai/tools.ts
+import { tool } from 'ai'
+import { z } from 'zod'
+import { createClient } from '@/lib/supabase/server'
+
+export const getRecommendedPCs = tool({
+  description: 'Obtener recomendaciones de PCs armadas según presupuesto y uso',
+  parameters: z.object({
+    budget: z.number().min(1000).max(20000).describe('Presupuesto en bolivianos'),
+    usage: z.enum(['gaming', 'streaming', 'oficina', 'diseño', 'programacion']).describe('Uso principal de la PC'),
+    performancePriority: z.enum(['balanced', 'gpu', 'cpu']).optional().describe('Prioridad de rendimiento')
+  }),
+  execute: async ({ budget, usage, performancePriority = 'balanced' }) => {
+    const supabase = await createClient()
+    
+    // Calcular rango de precios (±20% del presupuesto)
+    const minPrice = budget * 0.8
+    const maxPrice = budget * 1.2
+    
+    // Consultar PCs armadas dentro del rango
+    const { data: pcs, error } = await supabase
+      .from('pcs_armadas')
+      .select('*')
+      .gte('precio_total_bs', minPrice)
+      .lte('precio_total_bs', maxPrice)
+      .order('precio_total_bs', { ascending: true })
+    
+    if (error) {
+      throw new Error(`Error al consultar PCs: ${error.message}`)
+    }
+    
+    // Filtrar por uso y prioridad
+    const filteredPCs = pcs.filter(pc => {
+      const pcGama = pc.gama.toLowerCase()
+      
+      // Mapeo de uso a gama recomendada
+      const usageToGama: Record<string, string[]> = {
+        gaming: ['media', 'alta', 'extrema'],
+        streaming: ['media', 'alta'],
+        diseño: ['alta', 'extrema'],
+        programacion: ['media', 'alta'],
+        oficina: ['baja', 'media']
+      }
+      
+      const recommendedGamas = usageToGama[usage] || ['media']
+      return recommendedGamas.includes(pcGama)
+    })
+    
+    // Ordenar por prioridad de rendimiento
+    if (performancePriority === 'gpu') {
+      filteredPCs.sort((a, b) => {
+        const aGPU = extractGPUValue(a.componentes)
+        const bGPU = extractGPUValue(b.componentes)
+        return bGPU - aGPU
+      })
+    } else if (performancePriority === 'cpu') {
+      filteredPCs.sort((a, b) => {
+        const aCPU = extractCPUValue(a.componentes)
+        const bCPU = extractCPUValue(b.componentes)
+        return bCPU - aCPU
+      })
+    }
+    
+    return {
+      recommendations: filteredPCs.slice(0, 3), // Top 3 recomendaciones
+      budget,
+      usage,
+      count: filteredPCs.length
+    }
+  }
+})
+
+export const getCompatibleComponents = tool({
+  description: 'Obtener componentes compatibles para armado guiado',
+  parameters: z.object({
+    componentType: z.enum([
+      'procesador', 'placa_madre', 'memoria_ram', 'tarjeta_grafica',
+      'almacenamiento', 'fuente_poder', 'gabinete', 'refrigeracion', 'monitor'
+    ]),
+    selectedComponents: z.array(z.number()).optional().describe('IDs de componentes ya seleccionados'),
+    budget: z.number().optional().describe('Presupuesto restante')
+  }),
+  execute: async ({ componentType, selectedComponents = [], budget }) => {
+    const supabase = await createClient()
+    
+    // Consultar componentes del tipo especificado
+    let query = supabase
+      .from('components')
+      .select('*')
+      .eq('tipo_componente', componentType)
+      .gt('stock', 0)
+    
+    // Aplicar filtro de presupuesto si está definido
+    if (budget) {
+      query = query.lte('precio_bs', budget)
+    }
+    
+    const { data: components, error } = await query
+      .order('precio_bs', { ascending: true })
+    
+    if (error) {
+      throw new Error(`Error al consultar componentes: ${error.message}`)
+    }
+    
+    // Si hay componentes seleccionados, filtrar por compatibilidad
+    if (selectedComponents.length > 0) {
+      const compatibleComponents = await filterCompatibleComponents(
+        components, 
+        selectedComponents, 
+        componentType
+      )
+      return { components: compatibleComponents, componentType }
+    }
+    
+    return { components, componentType }
+  }
+})
+
+// Función auxiliar para filtrar componentes compatibles
+async function filterCompatibleComponents(
+  components: any[], 
+  selectedComponentIds: number[], 
+  newComponentType: string
+): Promise<any[]> {
+  const supabase = await createClient()
+  
+  // Obtener especificaciones de componentes seleccionados
+  const { data: selectedComponents, error } = await supabase
+    .from('components')
+    .select('*')
+    .in('id_componente', selectedComponentIds)
+  
+  if (error) throw error
+  
+  // Aquí iría la lógica compleja de compatibilidad
+  // basada en especificaciones técnicas, sockets, etc.
+  
+  // Por ahora, retornamos todos los componentes
+  // En una implementación real, esto sería mucho más complejo
+  return components
+}
