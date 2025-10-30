@@ -1,0 +1,58 @@
+// app/api/products/search/route.ts
+import { NextRequest, NextResponse } from 'next/server'
+import { createClient } from '@/lib/supabase/server'
+
+export async function POST(request: NextRequest) {
+  try {
+    const { query, filters } = await request.json()
+    const supabase = await createClient()
+    
+    // Construir consulta base
+    let supabaseQuery = supabase
+      .from('components')
+      .select('*')
+      .gt('stock', 0)
+    
+    // Aplicar búsqueda de texto
+    if (query && query.length >= 3) {
+      supabaseQuery = supabaseQuery
+        .or(`nombre_componente.ilike.%${query}%,descripcion.ilike.%${query}%`)
+    }
+    
+    // Aplicar filtros
+    if (filters.category) {
+      supabaseQuery = supabaseQuery.eq('tipo_componente', filters.category)
+    }
+    
+    if (filters.minPrice || filters.maxPrice) {
+      if (filters.minPrice) {
+        supabaseQuery = supabaseQuery.gte('precio_bs', filters.minPrice)
+      }
+      if (filters.maxPrice) {
+        supabaseQuery = supabaseQuery.lte('precio_bs', filters.maxPrice)
+      }
+    }
+    
+    // Ejecutar consulta
+    const { data: products, error } = await supabaseQuery
+      .order('precio_bs', { ascending: true })
+      .limit(50)
+    
+    if (error) {
+      console.error('Search error:', error)
+      return NextResponse.json(
+        { error: 'Error en la búsqueda' },
+        { status: 500 }
+      )
+    }
+    
+    return NextResponse.json({ products })
+    
+  } catch (error) {
+    console.error('Search API error:', error)
+    return NextResponse.json(
+      { error: 'Error interno del servidor' },
+      { status: 500 }
+    )
+  }
+}
