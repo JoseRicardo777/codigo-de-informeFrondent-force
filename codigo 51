@@ -1,0 +1,67 @@
+// __tests__/api/cart/add.test.ts
+import { createMocks } from 'node-mocks-http'
+import { POST } from '@/app/api/cart/add/route'
+import { createClient } from '@/lib/supabase/server'
+
+// Mock Supabase
+jest.mock('@/lib/supabase/server')
+
+describe('POST /api/cart/add', () => {
+  beforeEach(() => {
+    jest.clearAllMocks()
+  })
+
+  it('should add item to cart successfully', async () => {
+    const mockUser = { id: 'user-123' }
+    const mockProduct = { id: 1, stock: 10, precio_bs: 1200 }
+    
+    // Mock Supabase responses
+    const mockSupabase = {
+      auth: {
+        getUser: jest.fn().mockResolvedValue({ data: { user: mockUser }, error: null })
+      },
+      from: jest.fn().mockReturnThis(),
+      select: jest.fn().mockReturnThis(),
+      eq: jest.fn().mockReturnThis(),
+      single: jest.fn().mockResolvedValue({ data: mockProduct, error: null }),
+      insert: jest.fn().mockResolvedValue({ error: null })
+    }
+
+    ;(createClient as jest.Mock).mockResolvedValue(mockSupabase)
+
+    const { req, res } = createMocks({
+      method: 'POST',
+      body: {
+        productId: 1,
+        quantity: 1
+      }
+    })
+
+    const response = await POST(req)
+    const data = await response.json()
+
+    expect(response.status).toBe(200)
+    expect(data.success).toBe(true)
+  })
+
+  it('should return error for unauthenticated user', async () => {
+    const mockSupabase = {
+      auth: {
+        getUser: jest.fn().mockResolvedValue({ data: { user: null }, error: null })
+      }
+    }
+
+    ;(createClient as jest.Mock).mockResolvedValue(mockSupabase)
+
+    const { req } = createMocks({
+      method: 'POST',
+      body: { productId: 1, quantity: 1 }
+    })
+
+    const response = await POST(req)
+    const data = await response.json()
+
+    expect(response.status).toBe(401)
+    expect(data.error).toBe('No autenticado')
+  })
+})
