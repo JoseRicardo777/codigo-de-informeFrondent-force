@@ -1,0 +1,6 @@
+const impactMetrics = {
+  reductionInSupportTickets: '64%',
+  increaseInAverageOrderValue: '28%',
+  decreaseInCartAbandonment: '42%',
+  timeSavedPerConfiguration: '45 minutes'
+}
