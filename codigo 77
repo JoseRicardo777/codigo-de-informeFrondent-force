@@ -1,0 +1,14 @@
+const monitoringSetup = {
+  tools: [
+    'Sentry para error tracking',
+    'LogRocket para session replay',
+    'DataDog para métricas de negocio',
+    'Custom dashboards para KPIs'
+  ],
+  metrics: [
+    'Conversión por fuente de tráfico',
+    'Tasa de error por funcionalidad',
+    'Performance por región geográfica',
+    'Satisfacción del usuario en tiempo real'
+  ]
+}
