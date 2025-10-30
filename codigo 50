@@ -1,0 +1,27 @@
+// __tests__/utils/format.test.ts
+import { formatPrice, formatProductName } from '@/utils/format'
+
+describe('Format Utilities', () => {
+  describe('formatPrice', () => {
+    it('should format price in bolivianos', () => {
+      expect(formatPrice(1234.56)).toBe('Bs. 1,234.56')
+      expect(formatPrice(0)).toBe('Bs. 0.00')
+      expect(formatPrice(999999.99)).toBe('Bs. 999,999.99')
+    })
+
+    it('should handle negative prices', () => {
+      expect(formatPrice(-500)).toBe('Bs. -500.00')
+    })
+  })
+
+  describe('formatProductName', () => {
+    it('should format product names correctly', () => {
+      expect(formatProductName('amd ryzen 5 5600x')).toBe('AMD Ryzen 5 5600X')
+      expect(formatProductName('nvidia rtx 3080 ti')).toBe('NVIDIA RTX 3080 Ti')
+    })
+
+    it('should handle empty strings', () => {
+      expect(formatProductName('')).toBe('')
+    })
+  })
+})
