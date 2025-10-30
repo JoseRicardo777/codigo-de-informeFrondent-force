@@ -1,0 +1,92 @@
+// app/api/ai/chat/route.ts
+import { streamText } from 'ai'
+import { aiModel, aiConfig } from '@/lib/ai/config'
+import { getRecommendedPCs, getCompatibleComponents } from '@/lib/ai/tools'
+import { createClient } from '@/lib/supabase/server'
+
+export const maxDuration = 30 // 30 seconds timeout
+
+export async function POST(req: Request) {
+  try {
+    const { messages } = await req.json()
+    const supabase = await createClient()
+    
+    // Obtener productos actuales para contexto
+    const { data: components, error: componentsError } = await supabase
+      .from('components')
+      .select('*')
+      .gt('stock', 0)
+    
+    const { data: pcsArmadas, error: pcsError } = await supabase
+      .from('pcs_armadas')
+      .select('*')
+    
+    if (componentsError || pcsError) {
+      console.error('Error fetching products:', componentsError || pcsError)
+      return new Response('Error interno del servidor', { status: 500 })
+    }
+    
+    // Crear contexto con productos actuales
+    const context = `
+Sistema de Gaming Store Bolivia - Asistente de PC Gaming
+
+PRODUCTOS DISPONIBLES EN INVENTARIO:
+${JSON.stringify(components, null, 2)}
+
+CONFIGURACIONES PRE-ARMADAS DISPONIBLES:
+${JSON.stringify(pcsArmadas, null, 2)}
+
+INSTRUCCIONES CRÍTICAS:
+1. SOLO recomendar productos que existan en el inventario anterior
+2. NUNCA inventar nombres de productos o precios
+3. Los precios están en bolivianos (Bs.) - NO usar símbolo $
+4. Verificar compatibilidad antes de recomendar componentes
+5. Ser amigable pero profesional, usar emojis moderadamente
+6. Explicar conceptos técnicos en lenguaje sencillo
+7. Si el usuario no da suficiente información, preguntar presupuesto y uso
+
+MODOS DE OPERACIÓN:
+- RECOMENDACIÓN: Usar getRecommendedPCs() para sugerir PCs completas
+- ARMADO GUIADO: Usar getCompatibleComponents() paso a paso
+
+ORDEN RECOMENDADO PARA ARMADO:
+1. Procesador
+2. Placa Madre (compatible con procesador)
+3. Memoria RAM (compatible con placa madre)
+4. Tarjeta Gráfica (según presupuesto y uso)
+5. Almacenamiento (SSD recomendado)
+6. Fuente de Poder (con suficiente wattage)
+7. Gabinete (compatible con componentes)
+8. Refrigeración (si es necesaria)
+9. Monitor (opcional)
+
+AL FINALIZAR UNA RECOMENDACIÓN:
+- Resumir la configuración
+- Mostrar precio total
+- Indicar al usuario que puede agregar al carrito
+- Preguntar si necesita modificaciones
+`.trim()
+
+    const result = streamText({
+      model: aiModel,
+      messages: [
+        {
+          role: 'system',
+          content: context
+        },
+        ...messages
+      ],
+      tools: {
+        getRecommendedPCs,
+        getCompatibleComponents
+      },
+      ...aiConfig
+    })
+
+    return result.toDataStreamResponse()
+    
+  } catch (error) {
+    console.error('AI Chat error:', error)
+    return new Response('Error interno del servidor', { status: 500 })
+  }
+}
