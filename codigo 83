@@ -1,0 +1,30 @@
+const internationalization = {
+  phases: [
+    {
+      phase: 1,
+      regions: ['Chile', 'Perú', 'Colombia'],
+      requirements: [
+        'Soporte multi-moneda',
+        'Adaptación de precios regionales',
+        'Contenido localizado',
+        'Soporte logístico local'
+      ]
+    },
+    {
+      phase: 2,
+      regions: ['México', 'Brazil', 'Argentina'],
+      requirements: [
+        'Soporte multi-idioma',
+        'Procesamiento de pagos locales',
+        'Soporte al cliente regional',
+        'Adaptación cultural de contenido'
+      ]
+    }
+  ],
+  technicalConsiderations: [
+    'Arquitectura multi-tenant',
+    'CDN global con localización',
+    'Base de datos distribuida',
+    'Sistema de cambios de moneda en tiempo real'
+  ]
+}
