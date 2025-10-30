@@ -1,0 +1,20 @@
+const sustainabilityMeasures = {
+  codeQuality: [
+    'Mantener cobertura de tests >85%',
+    'Code reviews obligatorios',
+    'Documentación siempre actualizada',
+    'Refactoring continuo programado'
+  ],
+  performance: [
+    'Monitoreo continuo de Core Web Vitals',
+    'Optimización mensual de bundles',
+    'Revisión trimestral de índices de BD',
+    'Auditoría semestral de seguridad'
+  ],
+  scalability: [
+    'Plan de escalamiento predefinido',
+    'Load testing mensual',
+    'Capacity planning trimestral',
+    'Disaster recovery testing anual'
+  ]
+}
