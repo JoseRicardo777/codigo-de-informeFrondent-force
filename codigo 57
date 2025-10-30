@@ -1,0 +1,70 @@
+// __tests__/security/rls-policies.test.ts
+import { createClient } from '@/lib/supabase/server'
+
+describe('Row Level Security Policies', () => {
+  it('should prevent users from accessing other users carts', async () => {
+    const user1Client = await createClient()
+    const user2Client = await createClient()
+    
+    // Mock diferentes usuarios
+    jest.spyOn(user1Client.auth, 'getUser').mockResolvedValue({
+      data: { user: { id: 'user-1' } },
+      error: null
+    })
+    
+    jest.spyOn(user2Client.auth, 'getUser').mockResolvedValue({
+      data: { user: { id: 'user-2' } },
+      error: null
+    })
+
+    // User 1 crea un carrito
+    const { data: cart1 } = await user1Client
+      .from('carritos')
+      .insert({ id_usuario: 'user-1' })
+      .select()
+      .single()
+
+    // User 2 intenta acceder al carrito de user 1
+    const { data: cart2, error } = await user2Client
+      .from('carritos')
+      .select('*')
+      .eq('id_carrito', cart1.id_carrito)
+      .single()
+
+    expect(error).not.toBeNull()
+    expect(cart2).toBeNull()
+  })
+
+  it('should allow admins to access all products', async () => {
+    const adminClient = await createClient()
+    
+    jest.spyOn(adminClient.auth, 'getUser').mockResolvedValue({
+      data: { 
+        user: { 
+          id: 'admin-user',
+          email: 'admin@gamingstore.com'
+        } 
+      },
+      error: null
+    })
+
+    // Mock que el usuario es admin
+    jest.spyOn(adminClient, 'from').mockImplementation(() => ({
+      select: () => ({
+        eq: () => ({
+          single: jest.fn().mockResolvedValue({
+            data: { is_admin: true },
+            error: null
+          })
+        })
+      })
+    }))
+
+    const { data: products, error } = await adminClient
+      .from('components')
+      .select('*')
+
+    expect(error).toBeNull()
+    expect(products).toBeInstanceOf(Array)
+  })
+})
