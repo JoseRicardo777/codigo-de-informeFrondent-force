@@ -1,0 +1,28 @@
+const researchAreas = {
+  predictiveAnalytics: {
+    focus: 'Predicción de demanda y tendencias',
+    approach: 'Time series analysis + ML',
+    dataSources: [
+      'Datos históricos de ventas',
+      'Tendencias de búsqueda',
+      'Indicadores económicos',
+      'Eventos del sector gaming'
+    ],
+    applications: [
+      'Optimización de inventario',
+      'Precios dinámicos',
+      'Recomendaciones estacionales',
+      'Detección de oportunidades'
+    ]
+  },
+  computerVision: {
+    focus: 'Análisis de imágenes de productos',
+    approach: 'CNN para clasificación y tagging',
+    applications: [
+      'Detección automática de especificaciones',
+      'Comparación visual de productos',
+      'Detección de productos similares',
+      'Moderación de imágenes de usuarios'
+    ]
+  }
+}
