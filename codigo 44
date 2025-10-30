@@ -1,0 +1,71 @@
+// hooks/use-ai-chat.ts
+import { useChat } from 'ai/react'
+import { useCartStore } from '@/stores/cart-store'
+
+interface UseAIChatOptions {
+  onComponentsSelected?: (componentIds: number[]) => void
+}
+
+export function useAIChat(options: UseAIChatOptions = {}) {
+  const { addItem } = useCartStore()
+  
+  const chat = useChat({
+    api: '/api/ai/chat',
+    onFinish: async (message) => {
+      // Analizar si el mensaje contiene componentes para agregar al carrito
+      const componentMatches = message.content.match(/AGREGAR_COMPONENTES:\[(.*?)\]/)
+      
+      if (componentMatches) {
+        try {
+          const componentIds = JSON.parse(componentMatches[1])
+          
+          if (Array.isArray(componentIds) && componentIds.length > 0) {
+            // Llamar callback si está definido
+            options.onComponentsSelected?.(componentIds)
+            
+            // Aquí podríamos agregar automáticamente al carrito
+            // o mostrar un botón para que el usuario decida
+            console.log('Components ready for cart:', componentIds)
+          }
+        } catch (error) {
+          console.error('Error parsing component IDs:', error)
+        }
+      }
+    },
+    onError: (error) => {
+      console.error('Chat error:', error)
+      // Podríamos mostrar un toast de error aquí
+    }
+  })
+  
+  // Función para agregar componentes recomendados al carrito
+  const addRecommendedComponents = async (componentIds: number[]) => {
+    try {
+      // Obtener información de los componentes
+      const response = await fetch('/api/products/batch', {
+        method: 'POST',
+        body: JSON.stringify({ ids: componentIds })
+      })
+      
+      if (!response.ok) throw new Error('Error fetching component details')
+      
+      const { products } = await response.json()
+      
+      // Agregar cada componente al carrito
+      for (const product of products) {
+        await addItem(product, 1)
+      }
+      
+      return { success: true, count: products.length }
+      
+    } catch (error) {
+      console.error('Error adding recommended components:', error)
+      return { success: false, error: error.message }
+    }
+  }
+  
+  return {
+    ...chat,
+    addRecommendedComponents
+  }
+}
