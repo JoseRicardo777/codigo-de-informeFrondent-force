@@ -1,0 +1,20 @@
+const growthStrategy = {
+  userAcquisition: [
+    'SEO y contenido especializado',
+    'Partnerships con influencers gaming',
+    'Programa de referidos',
+    'Presencia en eventos del sector'
+  ],
+  monetization: [
+    'Comisiones por marketplace',
+    'Servicios premium de asesoría',
+    'Publicidad contextual',
+    'Suscripciones para contenido exclusivo'
+  ],
+  retention: [
+    'Programa de lealtad multi-nivel',
+    'Contenido educativo continuo',
+    'Comunidad y foros especializados',
+    'Soporte técnico premium'
+  ]
+}
