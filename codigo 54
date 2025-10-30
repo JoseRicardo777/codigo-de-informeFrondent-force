@@ -1,0 +1,49 @@
+# artillery/load-test.yml
+config:
+  target: "https://gaming-store.vercel.app"
+  phases:
+    - duration: 60
+      arrivalRate: 10
+      name: "Warm up"
+    - duration: 120
+      arrivalRate: 50
+      name: "Sustained load"
+    - duration: 60
+      arrivalRate: 100
+      name: "Spike test"
+  payload:
+    path: "test-data/users.csv"
+    fields:
+      - "email"
+      - "password"
+
+scenarios:
+  - name: "Browse products"
+    flow:
+      - get:
+          url: "/"
+      - get:
+          url: "/productos/componentes"
+      - think: 5
+      - get:
+          url: "/api/products/search"
+          qs:
+            query: "ryzen"
+      - think: 3
+
+  - name: "Add to cart flow"
+    flow:
+      - post:
+          url: "/api/auth/login"
+          json:
+            email: "{{ email }}"
+            password: "{{ password }}"
+      - get:
+          url: "/productos/componentes"
+      - post:
+          url: "/api/cart/add"
+          json:
+            productId: 1
+            quantity: 1
+      - get:
+          url: "/carrito"
