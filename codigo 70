@@ -1,0 +1,36 @@
+const competitiveAnalysis = {
+  features: {
+    aiAssistant: {
+      gamingStore: true,
+      competitorA: false,
+      competitorB: false,
+      competitorC: false
+    },
+    compatibilityValidation: {
+      gamingStore: true,
+      competitorA: false,
+      competitorB: true, // Básico
+      competitorC: false
+    },
+    buildGuidance: {
+      gamingStore: true, // Paso a paso
+      competitorA: false,
+      competitorB: true, // Plantillas
+      competitorC: false
+    }
+  },
+  performance: {
+    pageLoad: {
+      gamingStore: '2.1s',
+      competitorA: '3.8s',
+      competitorB: '2.9s',
+      competitorC: '4.2s'
+    },
+    mobileExperience: {
+      gamingStore: 'Excelente',
+      competitorA: 'Bueno',
+      competitorB: 'Regular',
+      competitorC: 'Pobre'
+    }
+  }
+}
