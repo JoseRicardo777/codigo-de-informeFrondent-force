@@ -1,0 +1,18 @@
+const loadTestResults = {
+  concurrentUsers: {
+    target: 1000,
+    achieved: 1250
+  },
+  errorRate: '0.4%',
+  throughput: '145 req/segundo',
+  resourceUsage: {
+    cpu: '68%',
+    memory: '420MB',
+    database: '35 connections'
+  },
+  responseTimes: {
+    p50: '180ms',
+    p95: '420ms',
+    p99: '680ms'
+  }
+}
