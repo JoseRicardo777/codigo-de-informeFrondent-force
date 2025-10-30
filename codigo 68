@@ -1,0 +1,25 @@
+const usabilityResults = {
+  participantCount: 30,
+  taskSuccessRate: {
+    findProduct: 96,
+    useAIAssistant: 88,
+    completePurchase: 92,
+    adminTasks: 94
+  },
+  systemUsabilityScale: {
+    score: 84.5, // Excelente
+    percentile: 90
+  },
+  userFeedback: {
+    positive: [
+      "El asistente de IA es increíblemente útil",
+      "Interfaz muy intuitiva y moderna",
+      "Proceso de compra simplificado"
+    ],
+    improvements: [
+      "Mejorar velocidad del chat en horas pico",
+      "Agregar más filtros de búsqueda",
+      "Incluir comparación de productos"
+    ]
+  }
+}
