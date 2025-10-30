@@ -1,0 +1,20 @@
+const proactiveAI = {
+  features: [
+    'Recomendaciones basadas en comportamiento',
+    'Alertas de precio y disponibilidad',
+    'Sugerencias de upgrades compatibles',
+    'Notificaciones de nuevas llegadas'
+  ],
+  technicalApproach: [
+    'Análisis de datos de usuario anonimizados',
+    'Machine learning para patrones de compra',
+    'Sistema de notificaciones push/email',
+    'Personalización en tiempo real'
+  ],
+  dataRequirements: [
+    'Historial de navegación',
+    'Patrones de clics y búsquedas',
+    'Comportamiento en sesiones anteriores',
+    'Preferencias explícitas e implícitas'
+  ]
+}
