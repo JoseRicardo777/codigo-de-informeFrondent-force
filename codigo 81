@@ -1,0 +1,24 @@
+const marketplaceExpansion = {
+  architecture: {
+    current: 'Single-store B2C',
+    target: 'Multi-vendor marketplace',
+    changes: [
+      'Sistema de registro para vendedores',
+      'Panel de control por vendedor',
+      'Sistema de comisiones y pagos',
+      'Gestión de inventario distribuido'
+    ]
+  },
+  technicalChallenges: [
+    'Escalabilidad de base de datos',
+    'Sistema de reputación y reviews',
+    'Logística de envíos multi-origen',
+    'Prevención de fraudes'
+  ],
+  businessOpportunities: [
+    'Expansión rápida de catálogo',
+    'Ingresos por comisiones',
+    'Diversificación de riesgo',
+    'Atracción de más tráfico'
+  ]
+}
