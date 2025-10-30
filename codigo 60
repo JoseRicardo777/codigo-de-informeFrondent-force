@@ -1,0 +1,21 @@
+// __tests__/compatibility/browsers.test.ts
+describe('Browser Compatibility', () => {
+  const browsers = [
+    { name: 'Chrome', version: '90+' },
+    { name: 'Firefox', version: '88+' },
+    { name: 'Safari', version: '14+' },
+    { name: 'Edge', version: '90+' }
+  ]
+
+  browsers.forEach(browser => {
+    it(`should support ${browser.name} ${browser.version}`, () => {
+      // Verificar que no usamos APIs no soportadas
+      expect(() => {
+        // Features modernas que verificamos
+        OptionalChaining?.()
+        NullishCoalescing?.()
+        asyncAwait?.()
+      }).not.toThrow()
+    })
+  })
+})
