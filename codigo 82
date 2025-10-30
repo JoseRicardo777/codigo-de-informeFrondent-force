@@ -1,0 +1,20 @@
+const mobileApp = {
+  approach: 'React Native + Expo',
+  features: [
+    'Experiencia mobile-first nativa',
+    'Notificaciones push',
+    'Funcionalidades offline',
+    'Integración con hardware mobile'
+  ],
+  development: {
+    frontend: 'React Native con TypeScript',
+    stateManagement: 'Zustand + React Query',
+    navigation: 'React Navigation',
+    testing: 'Detox + Jest'
+  },
+  deployment: {
+    ios: 'App Store Connect',
+    android: 'Google Play Console',
+    updates: 'Expo OTA updates'
+  }
+}
