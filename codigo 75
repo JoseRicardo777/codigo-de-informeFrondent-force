@@ -1,0 +1,15 @@
+const reviewsSystem = {
+  priority: 'Media-Alta',
+  estimatedEffort: '2-3 semanas',
+  features: [
+    'Calificación por estrellas (1-5)',
+    'Comentarios y fotos de usuarios',
+    'Verificación de compras',
+    'Moderación de contenido'
+  ],
+  benefits: [
+    'Aumentar confianza de nuevos usuarios',
+    'Mejorar SEO con contenido generado',
+    'Retroalimentación para mejoras'
+  ]
+}
