@@ -1,0 +1,16 @@
+const comparisonFeatures = {
+  wishlist: {
+    functionality: 'Guardar productos para después',
+    implementation: 'Nueva tabla user_wishlists',
+    integration: 'Sync con carrito y recomendaciones'
+  },
+  comparison: {
+    functionality: 'Comparar hasta 4 productos',
+    implementation: 'Componente de comparación side-by-side',
+    features: [
+      'Tabla comparativa de especificaciones',
+      'Análisis de precio/valor',
+      'Recomendación basada en comparación'
+    ]
+  }
+}
