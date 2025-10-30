@@ -1,0 +1,17 @@
+const externalDependencies = {
+  supabase: {
+    limitation: 'Plan gratuito inicial',
+    impact: 'Límites de almacenamiento y ancho de banda',
+    mitigation: 'Plan de escalamiento preparado'
+  },
+  groq: {
+    limitation: 'Rate limiting del plan gratuito',
+    impact: 'Velocidad de respuesta en horas pico',
+    mitigation: 'Caching de respuestas frecuentes'
+  },
+  vercel: {
+    limitation: 'Límites de funciones serverless',
+    impact: 'Tiempos de cold start ocasionales',
+    mitigation: 'Warm-up strategies implementadas'
+  }
+}
