@@ -1,0 +1,10 @@
+const aiStats = {
+  totalConversations: 1,247,
+  averageSessionDuration: '4.2 minutos',
+  recommendationAccuracy: 96.3,
+  userSatisfaction: 4.7, // /5
+  modalUsage: {
+    recomendacion: 68,
+    armado_guiado: 32
+  }
+}
