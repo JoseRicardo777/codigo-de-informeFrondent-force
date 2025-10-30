@@ -1,0 +1,13 @@
+CREATE OR REPLACE FUNCTION calcular_total_carrito(p_carrito_id INTEGER)
+RETURNS DECIMAL(10,2) AS $$
+DECLARE
+  total DECIMAL(10,2);
+BEGIN
+  SELECT SUM(ci.cantidad * ci.precio_unitario)
+  INTO total
+  FROM carrito_items ci
+  WHERE ci.id_carrito = p_carrito_id;
+  
+  RETURN COALESCE(total, 0);
+END;
+$$ LANGUAGE plpgsql;
