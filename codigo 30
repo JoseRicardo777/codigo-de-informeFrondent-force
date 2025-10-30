@@ -1,0 +1,123 @@
+gaming-store/
+├── app/                          # Next.js App Router
+│   ├── (auth)/                   # Grupo de rutas de autenticación
+│   │   ├── login/
+│   │   │   └── page.tsx
+│   │   ├── registro/
+│   │   │   └── page.tsx
+│   │   ├── recuperar-password/
+│   │   │   └── page.tsx
+│   │   └── verificar-email/
+│   │       └── page.tsx
+│   ├── admin/                    # Panel de administración
+│   │   ├── page.tsx
+│   │   ├── componentes/
+│   │   │   ├── page.tsx
+│   │   │   ├── nuevo/
+│   │   │   │   └── page.tsx
+│   │   │   └── [id]/
+│   │   │       └── page.tsx
+│   │   ├── usuarios/
+│   │   │   └── page.tsx
+│   │   └── ordenes/
+│   │       └── page.tsx
+│   ├── arma-tu-pc/              # Asistente de IA
+│   │   ├── page.tsx
+│   │   └── chat/
+│   │       └── page.tsx
+│   ├── carrito/                  # Carrito de compras
+│   │   └── page.tsx
+│   ├── checkout/                 # Proceso de pago
+│   │   └── page.tsx
+│   ├── productos/                # Catálogo de productos
+│   │   ├── componentes/
+│   │   │   └── page.tsx
+│   │   └── pcs-armadas/
+│   │       └── page.tsx
+│   ├── api/                      # API Routes
+│   │   ├── ai/
+│   │   │   └── chat/
+│   │   │       └── route.ts
+│   │   ├── cart/
+│   │   │   ├── add/
+│   │   │   │   └── route.ts
+│   │   │   ├── remove/
+│   │   │   │   └── route.ts
+│   │   │   └── get/
+│   │   │       └── route.ts
+│   │   └── productos/
+│   │       └── route.ts
+│   ├── layout.tsx               # Layout principal
+│   ├── page.tsx                 # Página de inicio
+│   └── globals.css              # Estilos globales
+├── components/                   # Componentes reutilizables
+│   ├── ui/                      # Componentes de shadcn/ui
+│   │   ├── button.tsx
+│   │   ├── input.tsx
+│   │   ├── card.tsx
+│   │   └── ...
+│   ├── layout/                  # Componentes de layout
+│   │   ├── header.tsx
+│   │   ├── footer.tsx
+│   │   └── navigation.tsx
+│   ├── product/                 # Componentes de productos
+│   │   ├── product-card.tsx
+│   │   ├── product-grid.tsx
+│   │   ├── product-filters.tsx
+│   │   └── product-details.tsx
+│   ├── cart/                    # Componentes de carrito
+│   │   ├── cart-item.tsx
+│   │   ├── cart-summary.tsx
+│   │   └── add-to-cart-button.tsx
+│   ├── ai/                      # Componentes de IA
+│   │   ├── chat-interface.tsx
+│   │   ├── chat-message.tsx
+│   │   └── recommendation-card.tsx
+│   └── admin/                   # Componentes de admin
+│       ├── dashboard-stats.tsx
+│       ├── product-form.tsx
+│       └── user-table.tsx
+├── lib/                         # Utilidades y configuraciones
+│   ├── supabase/                # Cliente de Supabase
+│   │   ├── client.ts            # Cliente para el navegador
+│   │   ├── server.ts            # Cliente para el servidor
+│   │   └── middleware.ts        # Configuración de middleware
+│   ├── ai/                      # Utilidades de IA
+│   │   ├── compatibility.ts     # Lógica de compatibilidad
+│   │   ├── prompts.ts           # Prompts del sistema
+│   │   └── tools.ts             # Funciones para la IA
+│   ├── utils/                   # Utilidades generales
+│   │   ├── format.ts            # Formateo de precios, fechas
+│   │   ├── validation.ts        # Validación de datos
+│   │   └── constants.ts         # Constantes de la aplicación
+│   └── types/                   # Definiciones de TypeScript
+│       ├── database.ts          # Tipos de la base de datos
+│       ├── product.ts           # Tipos de productos
+│       └── ai.ts                # Tipos para la IA
+├── hooks/                       # Custom React hooks
+│   ├── use-auth.ts
+│   ├── use-cart.ts
+│   ├── use-products.ts
+│   └── use-ai-chat.ts
+├── scripts/                     # Scripts de base de datos y utilidades
+│   ├── 001_create_tables.sql
+│   ├── 002_insert_data.sql
+│   ├── 003_create_user_trigger.sql
+│   ├── 004_create_admin_user.sql
+│   └── 005_compatibility_table.sql
+├── public/                      # Archivos estáticos
+│   ├── images/
+│   │   ├── placeholder-product.jpg
+│   │   └── logo.png
+│   └── icons/
+├── docs/                        # Documentación
+│   ├── 01-INFORME-EJECUTIVO.md
+│   ├── 02-GUIA-INSTALACION.md
+│   ├── 03-MANUAL-ADMINISTRADOR.md
+│   ├── 04-MANUAL-USUARIO.md
+│   └── 05-INFORME-TECNICO.md
+├── next.config.mjs              # Configuración de Next.js
+├── tailwind.config.ts           # Configuración de Tailwind CSS
+├── tsconfig.json                # Configuración de TypeScript
+├── package.json                 # Dependencias del proyecto
+└── README.md                    # Documentación principal
