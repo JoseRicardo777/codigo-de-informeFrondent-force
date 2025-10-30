@@ -1,0 +1,16 @@
+const engagementMetrics = {
+  sessionDuration: '8.4 minutos',
+  pagesPerSession: 6.2,
+  returningUsers: '34%',
+  featureAdoption: {
+    aiAssistant: '67%',
+    productFilters: '58%',
+    savedCarts: '42%'
+  },
+  conversionFunnel: {
+    visitors: 100,
+    productViews: 72,
+    cartAdds: 42,
+    purchases: 19
+  }
+}
