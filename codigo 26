@@ -1,0 +1,6 @@
+/* Tailwind CSS breakpoints */
+sm: 640px   /* Móviles en landscape y tablets pequeñas */
+md: 768px   /* Tablets */
+lg: 1024px  /* Laptops */
+xl: 1280px  /* Desktops */
+2xl: 1536px /* Desktops grandes */
