@@ -1,0 +1,18 @@
+const architecturalPatterns = {
+  nextjsAppRouter: {
+    validation: 'Excelente para aplicaciones complejas',
+    recommendation: 'Adopción recomendada para nuevos proyectos'
+  },
+  supabase: {
+    validation: 'Ideal para startups y scale-ups',
+    recommendation: 'Reduce tiempo de desarrollo en 40%'
+  },
+  serverActions: {
+    validation: 'Simplifica operaciones de datos',
+    recommendation: 'Uso combinado con APIs tradicionales'
+  },
+  aiIntegration: {
+    validation: 'Viable con modelos actuales',
+    recommendation: 'Planificar para costos de escala'
+  }
+}
