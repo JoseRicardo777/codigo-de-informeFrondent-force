@@ -1,0 +1,16 @@
+// lib/ai/config.ts
+import { createGroq } from '@ai-sdk/groq'
+
+export const groq = createGroq({
+  apiKey: process.env.GROQ_API_KEY!,
+})
+
+// Modelo configuration
+export const aiModel = groq('llama-3.3-70b-versatile')
+
+// Configuración del stream
+export const aiConfig = {
+  maxTokens: 4000,
+  temperature: 0.7,
+  topP: 0.9,
+}
