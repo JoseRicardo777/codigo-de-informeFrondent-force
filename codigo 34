@@ -1,0 +1,109 @@
+'use client'
+
+import { useMemo, useCallback } from 'react'
+import { useInfiniteQuery } from '@tanstack/react-query'
+import { useVirtualizer } from '@tanstack/react-virtual'
+
+interface ProductGridProps {
+  initialProducts: Product[]
+  filters: ProductFilters
+}
+
+export function ProductGrid({ initialProducts, filters }: ProductGridProps) {
+  const {
+    data,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+    status,
+  } = useInfiniteQuery({
+    queryKey: ['products', filters],
+    queryFn: async ({ pageParam = 0 }) => {
+      const response = await fetch(`/api/products?page=${pageParam}&filters=${JSON.stringify(filters)}`)
+      return response.json()
+    },
+    getNextPageParam: (lastPage, pages) => 
+      lastPage.hasNextPage ? pages.length : undefined,
+    initialData: { pages: [initialProducts], pageParams: [0] },
+    staleTime: 5 * 60 * 1000, // 5 minutos
+  })
+
+  // Aplanar todos los productos
+  const allProducts = useMemo(() => {
+    return data?.pages.flatMap(page => page.products) ?? []
+  }, [data])
+
+  const parentRef = useRef<HTMLDivElement>(null)
+
+  const virtualizer = useVirtualizer({
+    count: allProducts.length,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 400,
+    overscan: 5,
+  })
+
+  const virtualItems = virtualizer.getVirtualItems()
+
+  const loadMore = useCallback(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage()
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
+
+  // Observer para infinite scroll
+  useEffect(() => {
+    const [lastItem] = [...virtualItems].reverse()
+    
+    if (!lastItem) return
+
+    if (lastItem.index >= allProducts.length - 1 && hasNextPage) {
+      loadMore()
+    }
+  }, [hasNextPage, loadMore, allProducts.length, virtualItems])
+
+  if (status === 'loading') {
+    return <ProductGridSkeleton />
+  }
+
+  if (status === 'error') {
+    return <ErrorState onRetry={() => refetch()} />
+  }
+
+  return (
+    <div ref={parentRef} className="h-screen overflow-auto">
+      <div
+        style={{
+          height: `${virtualizer.getTotalSize()}px`,
+          width: '100%',
+          position: 'relative',
+        }}
+      >
+        {virtualItems.map((virtualItem) => {
+          const product = allProducts[virtualItem.index]
+          
+          return (
+            <div
+              key={product.id}
+              style={{
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                width: '100%',
+                height: `${virtualItem.size}px`,
+                transform: `translateY(${virtualItem.start}px)`,
+              }}
+            >
+              <ProductCard product={product} />
+            </div>
+          )
+        })}
+      </div>
+      
+      {isFetchingNextPage && (
+        <div className="flex justify-center p-8">
+          <LoadingSpinner />
+        </div>
+      )}
+    </div>
+  )
+}
