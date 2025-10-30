@@ -1,0 +1,13 @@
+CREATE TABLE carrito_items (
+  id_item SERIAL PRIMARY KEY,
+  id_carrito INTEGER NOT NULL REFERENCES carritos(id_carrito) ON DELETE CASCADE,
+  id_componente INTEGER NOT NULL REFERENCES componentes(id_componente) ON DELETE CASCADE,
+  cantidad INTEGER NOT NULL CHECK (cantidad > 0),
+  precio_unitario DECIMAL(10,2) NOT NULL CHECK (precio_unitario > 0),
+  created_at TIMESTAMPTZ DEFAULT NOW(),
+  UNIQUE(id_carrito, id_componente) -- Evitar duplicados
+);
+
+-- Índices para carrito_items
+CREATE INDEX idx_carrito_items_carrito ON carrito_items(id_carrito);
+CREATE INDEX idx_carrito_items_componente ON carrito_items(id_componente);
