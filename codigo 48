@@ -1,0 +1,76 @@
+// hooks/use-auth.ts
+import { useRouter } from 'next/navigation'
+import { createClient } from '@/lib/supabase/client'
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+
+export function useAuth() {
+  const supabase = createClient()
+  const router = useRouter()
+  const queryClient = useQueryClient()
+
+  const { data: user, isLoading } = useQuery({
+    queryKey: ['user'],
+    queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser()
+      return user
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutos
+  })
+
+  const signInMutation = useMutation({
+    mutationFn: async (credentials: { email: string; password: string }) => {
+      const { data, error } = await supabase.auth.signInWithPassword(credentials)
+      if (error) throw error
+      return data
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['user'] })
+      router.push('/')
+    },
+  })
+
+  const signUpMutation = useMutation({
+    mutationFn: async (credentials: { 
+      email: string; 
+      password: string;
+      nombre_completo: string;
+    }) => {
+      const { data, error } = await supabase.auth.signUp({
+        email: credentials.email,
+        password: credentials.password,
+        options: {
+          data: {
+            nombre_completo: credentials.nombre_completo
+          }
+        }
+      })
+      if (error) throw error
+      return data
+    },
+    onSuccess: () => {
+      router.push('/auth/verificar-email')
+    },
+  })
+
+  const signOutMutation = useMutation({
+    mutationFn: async () => {
+      const { error } = await supabase.auth.signOut()
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.clear()
+      router.push('/')
+    },
+  })
+
+  return {
+    user,
+    isLoading,
+    signIn: signInMutation.mutateAsync,
+    signUp: signUpMutation.mutateAsync,
+    signOut: signOutMutation.mutateAsync,
+    isSigningIn: signInMutation.isPending,
+    isSigningUp: signUpMutation.isPending,
+    isSigningOut: signOutMutation.isPending,
+  }
+}
